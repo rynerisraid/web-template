@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useTheme } from "@/components/theme-provider";
+import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {

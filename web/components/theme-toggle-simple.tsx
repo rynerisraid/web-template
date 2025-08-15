@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Sun, Moon, Laptop } from "lucide-react"
-import { useTheme } from "@/components/theme-provider"
+import { useTheme } from "next-themes"
 import { cn } from "@/lib/utils"
 
 export function ThemeToggleSimple() {
