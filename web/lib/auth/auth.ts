@@ -83,6 +83,9 @@ export const {
         token.id = (user as any).id as string;
         token.type = (user as any).type;
         token.access_token = (user as any).access_token;
+        // 保存full_name到token中
+        token.full_name = (user as any).full_name;
+        token.username = (user as any).username;
       }
 
       return token;
@@ -91,6 +94,8 @@ export const {
       if (session.user) {
         session.user.id = token.id;
         session.user.type = token.type as any;
+        // 从token中获取用户信息并映射到session
+        session.user.name = (token as any).full_name || (token as any).username || session.user.email;
       }
 
       // 将 access_token 暴露给前端（仅在需要时，可移除）

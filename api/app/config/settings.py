@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     # 数据库配置
     DATABASE_URL: str = ""
     ASYNC_DATABASE_URL: str = ""
+    DATASOURCE_KEY: str = ""
 
     # 认证配置
     NEXTAUTH_SECRET: str = ""

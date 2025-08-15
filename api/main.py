@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.router import auth as auth_router
+from app.router import data as data_router
 from typing import Union
 from app.config.settings import settings
 from app.config.db import engine,Base
@@ -29,6 +30,7 @@ app.add_middleware(
 )
 
 app.include_router(auth_router.router, prefix="/auth", tags=["auth"])
+app.include_router(data_router.router, prefix="/data", tags=["data"])
 
 @app.get("/")
 def read_root():

@@ -5,6 +5,10 @@ import { AppSidebar } from "@/components/dash/app-sidebar";
 import { SessionWrapper } from "@/components/auth/session-wrapper";
 import { auth } from "@/lib/auth/auth";
 import { redirect } from "next/navigation";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { Button } from "@/components/ui/button";
+import { Home } from "lucide-react";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "AI Template Hub - Curated AI Resources & Templates",
@@ -27,9 +31,20 @@ export default async function DashboardLayout({
   return (
     <SessionWrapper>
       <SidebarProvider>
-        <AppSidebar />
+        <AppSidebar session={session} />
         <main className="w-full">
-          <SidebarTrigger className="ml-4 mt-4" />
+          <div className="flex justify-between items-center h-12 w-full">
+            <SidebarTrigger className="ml-2 my-2" />
+            <div className="flex items-center gap-2 mr-2 my-2">
+              <Button variant="ghost" size="icon" asChild>
+                <Link href="/">
+                  <Home className="h-5 w-5" />
+                  <span className="sr-only">Home</span>
+                </Link>
+              </Button>
+              <ThemeToggle />
+            </div>
+          </div>
           <div className="p-4">{children}</div>
         </main>
       </SidebarProvider>

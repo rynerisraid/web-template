@@ -69,15 +69,16 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+    username = None
     try:
         payload = jwt.decode(token, NEXTAUTH_SECRET, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        username = payload.get("sub")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        #token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user_by_username(db, username=token_data.username)
+    user = get_user_by_username(db, username)
     if user is None:
         raise credentials_exception
     return user

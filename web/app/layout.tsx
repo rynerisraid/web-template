@@ -20,10 +20,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className="light">
+    <html lang="en">
       <body className={`${GeistSans.variable} ${GeistMono.variable}`}>
         <SessionWrapper>
-          <ThemeProvider defaultTheme="system" storageKey="ai-hub-theme">
+          <ThemeProvider storageKey="ai-hub-theme">
             <div className="flex min-h-screen flex-col">
               <Toaster />
               <main className="flex-1">{children}</main>

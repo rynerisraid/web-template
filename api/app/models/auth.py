@@ -17,6 +17,10 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.datetime.now)
     updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
 
+
+    def set_hashed_password(self, hashed_password: str):
+        self.hashed_password = hashed_password
+        
     def get_id(self):
         return str(self.id)
 

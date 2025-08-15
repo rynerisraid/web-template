@@ -2,25 +2,17 @@
 
 import * as React from "react";
 import {
-  AudioWaveform,
-  BookOpen,
   Bot,
-  Command,
   Frame,
-  GalleryVerticalEnd,
   Map,
   PieChart,
   Settings2,
   SquareTerminal,
-  TrendingUp,
-  Activity,
-  Shield,
-  MessageCircle,
-  Calculator,
-  BarChart3,
-  Users,
-  Package,
+  DatabaseZap,
+  LucideSettings2,
+  SettingsIcon,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { NavMain } from "@/components/dash/nav-main";
 import { NavProjects } from "@/components/dash/nav-projects";
@@ -33,6 +25,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { AppSidebarHeader } from "@/components/dash/app-sidebar-header";
+import { NavSecondary } from "@/components/dash/nav-secondary";
+import { Session } from "next-auth";
 
 // 股票交易分析平台的导航数据
 const data = {
@@ -44,10 +38,10 @@ const data = {
   navMain: [
     {
       title: "Overview",
-      url: "/admin",
+      url: "/dashboard",
       icon: SquareTerminal,
-      isActive: true,
     },
+
     {
       title: "Strategy Configuration",
       url: "/admin/strategy-configuration",
@@ -69,7 +63,7 @@ const data = {
     },
     {
       title: "Playground",
-      url: "/admin/playground",
+      url: "/admin/playground", // 添加具体的 url 路径
       icon: Bot,
       items: [
         {
@@ -79,6 +73,21 @@ const data = {
         {
           title: "Simulation Settings",
           url: "/admin/playground/simulation-settings",
+        },
+      ],
+    },
+    {
+      title: "Data Warehousing",
+      url: "#", // 添加 url 属性
+      icon: DatabaseZap,
+      items: [
+        {
+          title: "Data Source",
+          url: "/dashboard/data-sources",
+        },
+        {
+          title: "Data Tasks",
+          url: "/dashboard/data-tasks",
         },
       ],
     },
@@ -100,20 +109,62 @@ const data = {
       icon: Map,
     },
   ],
+
+  navSecondary: [
+    {
+      title: "Settings",
+      url: "#",
+      icon: SettingsIcon,
+    },
+  ],
 };
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+export function AppSidebar({ session }: { session: Session }) {
+  const user = session?.user;
+  const pathname = usePathname();
+
+  // 确保用户对象包含NavUser组件需要的所有字段
+  const navUser = {
+    name: user?.name || "Unknown User",
+    email: user?.email || "unknown@example.com",
+    avatar: user?.image || "/avatars/default.png",
+  };
+
+  // 创建一个带有 isActive 属性的 navMain 副本
+  const navMainWithActive = React.useMemo(() => {
+    return data.navMain.map((item) => {
+      // 检查当前路径是否匹配主菜单项或其子菜单项
+      const isMainActive = pathname === item.url;
+      const isSubActive = item.items?.some(
+        (subItem) => pathname === subItem.url
+      );
+
+      // 为子项添加 isActive 属性
+      const itemsWithActive = item.items?.map((subItem) => ({
+        ...subItem,
+        isActive: pathname === subItem.url,
+      }));
+
+      return {
+        ...item,
+        isActive: isMainActive || isSubActive,
+        items: itemsWithActive,
+      };
+    });
+  }, [pathname]);
+
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon">
       <SidebarHeader>
         <AppSidebarHeader />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navMainWithActive} />
         <NavProjects projects={data.projects} />
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={navUser} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
