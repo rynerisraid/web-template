@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   AudioWaveform,
   BookOpen,
@@ -20,19 +20,19 @@ import {
   BarChart3,
   Users,
   Package,
-} from "lucide-react"
+} from "lucide-react";
 
-import { NavMain } from "@/components/dash/nav-main"
-import { NavProjects } from "@/components/dash/nav-projects"
-import { NavUser } from "@/components/dash/nav-user"
-import { TeamSwitcher } from "@/components/dash/team-switcher"
+import { NavMain } from "@/components/dash/nav-main";
+import { NavProjects } from "@/components/dash/nav-projects";
+import { NavUser } from "@/components/dash/nav-user";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { AppSidebarHeader } from "@/components/dash/app-sidebar-header";
 
 // 股票交易分析平台的导航数据
 const data = {
@@ -41,13 +41,6 @@ const data = {
     email: "admin@example.com",
     avatar: "/avatars/admin.jpg",
   },
-  teams: [
-    {
-      name: "TradeInsight Admin",
-      logo: TrendingUp,
-      plan: "Enterprise",
-    },
-  ],
   navMain: [
     {
       title: "Overview",
@@ -107,13 +100,13 @@ const data = {
       icon: Map,
     },
   ],
-}
+};
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <AppSidebarHeader />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
@@ -124,5 +117,5 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
+  );
 }

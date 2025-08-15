@@ -29,7 +29,7 @@ export default function HeroSection() {
 
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-foreground mb-6 leading-tight">
             Build AI Apps with
-            <span className="gradient-text block">Premium Templates</span>
+            <span className="text-primary block">Premium Templates</span>
           </h1>
 
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-8 leading-relaxed">
@@ -43,7 +43,7 @@ export default function HeroSection() {
           <Link href="/templates">
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 text-primary-foreground px-8 py-4 text-lg glass-button"
+              className="text-primary-foreground px-8 py-4 text-lg glass-button"
             >
               Explore Templates
               <ArrowRight className="ml-2 h-5 w-5" />

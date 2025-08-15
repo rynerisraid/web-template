@@ -1,6 +1,5 @@
 import NextAuth, { type DefaultSession } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-//import { createGuestUser } from '@/lib/db/queries';
 import { authConfig } from './auth.config';
 import type { DefaultJWT } from 'next-auth/jwt';
 
@@ -77,14 +76,6 @@ export const {
         }
       },
     }),
-    // Credentials({
-    //   id: 'guest',
-    //   credentials: {},
-    //   async authorize() {
-    //     const [guestUser] = await createGuestUser();
-    //     return { ...guestUser, type: 'guest' };
-    //   },
-    // }),
   ],
   callbacks: {
     async jwt({ token, user }) {

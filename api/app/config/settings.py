@@ -5,11 +5,11 @@ from fastapi.security import OAuth2PasswordBearer
 
 class Settings(BaseSettings):
     # 数据库配置
-    DATABASE_URL: str
-    ASYNC_DATABASE_URL: str
-    
+    DATABASE_URL: str = ""
+    ASYNC_DATABASE_URL: str = ""
+
     # 认证配置
-    NEXTAUTH_SECRET: str
+    NEXTAUTH_SECRET: str = ""
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 

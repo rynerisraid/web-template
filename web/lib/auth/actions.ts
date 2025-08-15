@@ -13,10 +13,11 @@ const authFormSchema = z.object({
 
 export interface LoginActionState {
   status: 'idle' | 'in_progress' | 'success' | 'failed' | 'invalid_data';
+  error?: string;
 }
 
 export const login = async (
-  _: LoginActionState,
+  _: any,
   formData: FormData,
 ): Promise<LoginActionState> => {
   try {
@@ -49,19 +50,19 @@ export interface RegisterActionState {
   | 'failed'
   | 'user_exists'
   | 'invalid_data';
+  error?: string;
 }
 
 export const register = async (
-  _: RegisterActionState,
+  _: any,
   formData: FormData,
 ): Promise<RegisterActionState> => {
   try {
     const validatedData = authFormSchema.parse({
       email: formData.get('email'),
       password: formData.get('password'),
+      full_name: formData.get('full_name'),
     });
-
-    console.log('------------------')
 
     // 调用 FastAPI 注册接口
     const apiBase = process.env.NEXT_PUBLIC_API_URL as string;
@@ -74,7 +75,7 @@ export const register = async (
         username: validatedData.email,
         email: validatedData.email,
         password: validatedData.password,
-        full_name: 'momo',
+        full_name: formData.get('full_name')
       }),
     });
     if (res.status === 400) {
