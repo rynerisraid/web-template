@@ -6,21 +6,18 @@ from app.services.data import DataService
 from app.models.data import (
     DataSourceCreate, 
     DataSourceRead, 
-    DataPipelineCreate, 
-    DataPipelineRead, 
     DataTableCreate, 
     DataTableRead,
-    DataSourceType
+    DataSourceType,
 )
-import uuid
 
+import uuid
+from app.models.auth import User
 from app.services.auth import get_current_user
 
 router = APIRouter(dependencies=[Depends(get_current_user)])
 
 # DataSource endpoints
-from app.models.auth import User
-
 @router.post("/sources/", response_model=DataSourceRead, status_code=status.HTTP_201_CREATED)
 async def create_data_source(
     data_source: DataSourceCreate,
@@ -79,55 +76,6 @@ async def delete_data_source(source_id: uuid.UUID, db: AsyncSession = Depends(ge
         raise HTTPException(status_code=404, detail="Data source not found")
     return
 
-# DataPipeline endpoints
-@router.post("/pipelines/", response_model=DataPipelineRead, status_code=status.HTTP_201_CREATED)
-async def create_data_pipeline(data_pipeline: DataPipelineCreate, db: AsyncSession = Depends(get_async_db)):
-    """
-    Create a new data pipeline
-    """
-    service = DataService(db)
-    return await service.create_data_pipeline(data_pipeline)
-
-@router.get("/pipelines/", response_model=List[DataPipelineRead])
-async def read_data_pipelines(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_async_db)):
-    """
-    Get list of data pipelines with pagination
-    """
-    service = DataService(db)
-    return await service.get_data_pipelines(skip, limit)
-
-@router.get("/pipelines/{pipeline_id}", response_model=DataPipelineRead)
-async def read_data_pipeline(pipeline_id: uuid.UUID, db: AsyncSession = Depends(get_async_db)):
-    """
-    Get a specific data pipeline by ID
-    """
-    service = DataService(db)
-    db_data_pipeline = await service.get_data_pipeline(pipeline_id)
-    if db_data_pipeline is None:
-        raise HTTPException(status_code=404, detail="Data pipeline not found")
-    return db_data_pipeline
-
-@router.put("/pipelines/{pipeline_id}", response_model=DataPipelineRead)
-async def update_data_pipeline(pipeline_id: uuid.UUID, data_pipeline_update: dict, db: AsyncSession = Depends(get_async_db)):
-    """
-    Update a data pipeline
-    """
-    service = DataService(db)
-    db_data_pipeline = await service.update_data_pipeline(pipeline_id, data_pipeline_update)
-    if db_data_pipeline is None:
-        raise HTTPException(status_code=404, detail="Data pipeline not found")
-    return db_data_pipeline
-
-@router.delete("/pipelines/{pipeline_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_data_pipeline(pipeline_id: uuid.UUID, db: AsyncSession = Depends(get_async_db)):
-    """
-    Delete a data pipeline
-    """
-    service = DataService(db)
-    success = await service.delete_data_pipeline(pipeline_id)
-    if not success:
-        raise HTTPException(status_code=404, detail="Data pipeline not found")
-    return
 
 # DataTable endpoints
 @router.post("/tables/", response_model=DataTableRead, status_code=status.HTTP_201_CREATED)
@@ -196,10 +144,3 @@ async def read_active_data_sources(db: AsyncSession = Depends(get_async_db)):
     service = DataService(db)
     return await service.get_active_data_sources()
 
-@router.get("/pipelines/source/{source_id}", response_model=List[DataPipelineRead])
-async def read_data_pipelines_by_source(source_id: uuid.UUID, db: AsyncSession = Depends(get_async_db)):
-    """
-    Get data pipelines by source ID
-    """
-    service = DataService(db)
-    return await service.get_data_pipelines_by_source(source_id)

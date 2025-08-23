@@ -50,3 +50,18 @@ class UserRead(UserBase):
 
     class Config:
         from_attributes = True
+
+
+# -------------------- Pydantic Schemas --------------------
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
+
+
+class ResetPasswordRequest(BaseModel):
+    username: str
+    new_password: str

@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import delete, update
-from app.models.data import DataSource, DataPipeline, DataTable, DataSourceCreate, DataSourceRead, DataPipelineCreate, DataPipelineRead, DataTableCreate, DataTableRead, DataSourceType
+from app.models.data import DataSource, DataTable, DataSourceCreate, DataSourceRead, DataTableCreate, DataTableRead, DataSourceType
 
 class DataService:
     """
@@ -107,94 +107,7 @@ class DataService:
         await self.db.commit()
         return result.rowcount > 0
 
-    # DataPipeline CRUD operations
-    async def create_data_pipeline(self, data_pipeline: DataPipelineCreate) -> DataPipelineRead:
-        """
-        创建新的数据管道记录
-        
-        Args:
-            data_pipeline: 数据管道创建模型，包含要创建的数据管道信息
-            
-        Returns:
-            DataPipelineRead: 创建后的数据管道读取模型
-        """
-        db_data_pipeline = DataPipeline(**data_pipeline.model_dump(exclude_unset=True))
-        self.db.add(db_data_pipeline)
-        await self.db.commit()
-        await self.db.refresh(db_data_pipeline)
-        return DataPipelineRead.model_validate(db_data_pipeline)
-
-    async def get_data_pipeline(self, data_pipeline_id: uuid.UUID) -> Optional[DataPipelineRead]:
-        """
-        根据ID获取单个数据管道记录
-        
-        Args:
-            data_pipeline_id: 数据管道的UUID
-            
-        Returns:
-            DataPipelineRead: 数据管道读取模型，如果未找到则返回None
-        """
-        result = await self.db.execute(select(DataPipeline).where(DataPipeline.id == data_pipeline_id))
-        data_pipeline = result.scalar_one_or_none()
-        if data_pipeline:
-            return DataPipelineRead.model_validate(data_pipeline)
-        return None
-
-    async def get_data_pipelines(self, skip: int = 0, limit: int = 100) -> List[DataPipelineRead]:
-        """
-        获取数据管道列表，支持分页
-        
-        Args:
-            skip: 跳过的记录数，默认为0
-            limit: 返回的记录数限制，默认为100
-            
-        Returns:
-            List[DataPipelineRead]: 数据管道读取模型列表
-        """
-        result = await self.db.execute(select(DataPipeline).offset(skip).limit(limit))
-        data_pipelines = result.scalars().all()
-        return [DataPipelineRead.model_validate(dp) for dp in data_pipelines]
-
-    async def update_data_pipeline(self, data_pipeline_id: uuid.UUID, data_pipeline_update: dict) -> Optional[DataPipelineRead]:
-        """
-        更新数据管道记录
-        
-        Args:
-            data_pipeline_id: 要更新的数据管道UUID
-            data_pipeline_update: 包含更新字段的字典
-            
-        Returns:
-            DataPipelineRead: 更新后的数据管道读取模型，如果未找到则返回None
-        """
-        stmt = (
-            update(DataPipeline)
-            .where(DataPipeline.id == data_pipeline_id)
-            .values(**data_pipeline_update)
-        )
-        await self.db.execute(stmt)
-        await self.db.commit()
-        
-        # 获取更新后的记录
-        result = await self.db.execute(select(DataPipeline).where(DataPipeline.id == data_pipeline_id))
-        updated_data_pipeline = result.scalar_one_or_none()
-        if updated_data_pipeline:
-            return DataPipelineRead.model_validate(updated_data_pipeline)
-        return None
-
-    async def delete_data_pipeline(self, data_pipeline_id: uuid.UUID) -> bool:
-        """
-        删除数据管道记录
-        
-        Args:
-            data_pipeline_id: 要删除的数据管道UUID
-            
-        Returns:
-            bool: 删除成功返回True，否则返回False
-        """
-        stmt = delete(DataPipeline).where(DataPipeline.id == data_pipeline_id)
-        result = await self.db.execute(stmt)
-        await self.db.commit()
-        return result.rowcount > 0
+    # DataPipeline functionality moved to `app/services/tasks.py` (PipelineService)
 
     # DataTable CRUD operations
     async def create_data_table(self, data_table: DataTableCreate) -> DataTableRead:
@@ -311,16 +224,4 @@ class DataService:
         data_sources = result.scalars().all()
         return [DataSourceRead.model_validate(ds) for ds in data_sources]
 
-    async def get_data_pipelines_by_source(self, source_id: uuid.UUID) -> List[DataPipelineRead]:
-        """
-        根据数据源ID获取关联的数据管道列表
-        
-        Args:
-            source_id: 数据源UUID
-            
-        Returns:
-            List[DataPipelineRead]: 关联的数据管道读取模型列表
-        """
-        result = await self.db.execute(select(DataPipeline).where(DataPipeline.source_id == source_id))
-        data_pipelines = result.scalars().all()
-        return [DataPipelineRead.model_validate(dp) for dp in data_pipelines]
+    # DataPipeline related operations moved to PipelineService in app/services/tasks.py

@@ -87,23 +87,10 @@ class DataSource(Base):
     def __repr__(self):
         return f'<DataSource {self.name}>'
 
-# 数据任务模型: 数据采集 数据清洗
-class DataPipeline(Base):
-    __tablename__ = "data_pipelines"
-    
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String, unique=True, index=True, nullable=False)
-    description = Column(Text, nullable=True)
-    source_id = Column(UUID(as_uuid=True), ForeignKey('data_sources.id'), nullable=False)
-    destination_table = Column(String, nullable=False)
-    schedule = Column(String, nullable=True)  # e.g., 'daily', 'hourly', 'weekly'
-    created_by = Column(UUID(as_uuid=True), ForeignKey('users.id'), nullable=False)
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, default=datetime.datetime.now)
-    updated_at = Column(DateTime, default=datetime.datetime.now, onupdate=datetime.datetime.now)
+# DataPipeline model has been moved to `app/models/tasks.py` to keep task-related
+# models grouped under the tasks module. See `app/models/tasks.py` for the
+# ORM model and related Pydantic schemas.
 
-    def __repr__(self):
-        return f'<DataPipeline {self.name}>'
 
 # 数据表格：维度表、事实表管理
 class DataTable(Base):
@@ -123,8 +110,6 @@ class DataTable(Base):
 
     def __repr__(self):
         return f'<DataTable {self.name}>'
-
-# Pydantic schemas for FastAPI
 
 # DataSource schemas
 class DataSourceBase(BaseModel):
@@ -149,26 +134,7 @@ class DataSourceRead(DataSourceBase):
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
-# DataPipeline schemas
-class DataPipelineBase(BaseModel):
-    name: str
-    description: str | None = None
-    source_id: uuid.UUID
-    destination_table: str
-    schedule: str | None = None
-    created_by: uuid.UUID
-    is_active: bool = True
-
-    class Config:
-        from_attributes = True
-
-class DataPipelineCreate(DataPipelineBase):
-    pass
-
-class DataPipelineRead(DataPipelineBase):
-    id: uuid.UUID
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
+# DataPipeline Pydantic schemas have been moved to `app/models/tasks.py`.
 
 # DataTable schemas
 class DataTableBase(BaseModel):
