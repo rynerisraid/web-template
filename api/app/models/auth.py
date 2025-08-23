@@ -6,6 +6,41 @@ from sqlalchemy import Boolean
 from pydantic import BaseModel, EmailStr
 from app.config.db import Base
 
+
+# -------------------- Pydantic Schemas --------------------
+
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: str | None = None
+    is_active: bool = True
+
+class UserCreate(UserBase):
+    password: str
+
+class UserRead(UserBase):
+    id: uuid.UUID
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    class Config:
+        from_attributes = True
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: str | None = None
+
+
+class ResetPasswordRequest(BaseModel):
+    username: str
+    new_password: str
+
+
 class User(Base):
     __tablename__ = "users"
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
@@ -33,35 +68,4 @@ class User(Base):
     def repr(self):
         return f'<User {self.username}>'
 
-# Pydantic schemas for FastAPI
-class UserBase(BaseModel):
-    username: str
-    email: EmailStr
-    full_name: str | None = None
-    is_active: bool = True
 
-class UserCreate(UserBase):
-    password: str
-
-class UserRead(UserBase):
-    id: uuid.UUID
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
-
-    class Config:
-        from_attributes = True
-
-
-# -------------------- Pydantic Schemas --------------------
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
-
-class TokenData(BaseModel):
-    username: str | None = None
-
-
-class ResetPasswordRequest(BaseModel):
-    username: str
-    new_password: str
